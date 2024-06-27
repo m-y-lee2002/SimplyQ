@@ -1,26 +1,34 @@
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+console.log("MongoDB URI from .env:", process.env.MONGO_URI); 
+
 const express = require('express');
 const mongoose = require('mongoose');
-const app = express();
-const User = require('./schema_Models/user.js');
-const Friends = require('./schema_Models/friend.js');
 const cors = require('cors');
+const app = express();
+const User = require('./schema/user.js');
+const Queue = require('./schema/queue.js');
+const Staff = require('./schema/staff.js');
+
 app.use(cors());
 app.use(express.json());
 
-//change URI also figure out how to store username and password for mongocollection safely
-const uri = "mongodb+srv://admin:admin123@friendscluster.x4xg0ne.mongodb.net/ChitChatDB?retryWrites=true&w=majority&appName=friendsCluster";
+const uri = process.env.MONGO_URI;
+
+if (!uri) {
+    console.error("MongoDB URI is not defined.");
+    process.exit(1);
+}
 
 async function connect() {
     try {
         await mongoose.connect(uri);
         console.log("Connected to MongoDB");
-
     } catch (error) {
-        console.error(error);
+        console.error("MongoDB connection error:", error);
     }
-
-
 }
+
 connect();
 
 app.listen(8000, () => {
