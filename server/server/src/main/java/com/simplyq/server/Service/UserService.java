@@ -23,4 +23,7 @@ public class UserService {
             throw new RuntimeException("Failed to save user: " + e.getMessage());
         }
     }
+    public User getUserByEmail(String email){
+        return userRepo.findByEmail(email);
+    }
 }
