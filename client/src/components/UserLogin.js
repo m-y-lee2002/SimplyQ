@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { useNavigate } from 'react-router-dom';  
+import { useNavigate } from 'react-router-dom';
+import { getAPI } from '../api/getAPI';
 
-class UserLogin extends Component{
-    constructor(props){
+class UserLogin extends Component {
+    constructor(props) {
         super(props);
         this.state = {
             email: null,
@@ -12,72 +13,70 @@ class UserLogin extends Component{
         this.submitHandler = this.submitHandler.bind(this);
         this.setPassword = this.setPassword.bind(this);
         this.setEmail = this.setEmail.bind(this);
-        this.fetchUserInfo = this.fetchUserInfo.bind(this);
         this.verifyUserCreds = this.verifyUserCreds.bind(this);
         this.clearInputs = this.clearInputs.bind(this);
     }
-    clearInputs(){
+
+    clearInputs() {
         document.getElementById('email').value = '';
         document.getElementById('password').value = '';
     }
-    verifyUserCreds(){
-        const result = this.fetchUserInfo;
-        if(result == null){
-            return false;
-        }else{
-            return true;
-        }
-    }
-    submitHandler(event){
-        event.preventDefault();
-        const{email, password} = this.state;
-        if(email == null || password == null){
-            alert("Missing email or password");
-        }else{
-            if(this.verifyUserCreds === true){
 
+    async verifyUserCreds() {
+        const { email, password } = this.state;
+        try {
+            const response = await getAPI('/verifyUserLogin/' + email);
+            console.log("Response:", response);
+            if(response){
+                return true
             }else{
-                alert("Invalid Username or Password");
+                return false;
             }
+            
+        } catch (error) {
+            return false;
+        }
+    }
+
+    submitHandler = async (event) => {
+        event.preventDefault();
+        const { email, password } = this.state;
+
+        if (!email || !password) {
+            alert("Missing email or password");
+            return;
         }
 
-    }
-    setEmail(currentEmail){
-        this.setState({email:currentEmail.target.value});
-    }
-    setPassword(currentPassword){
-        this.setState({password:currentPassword.target.value});
+        this.verifyUserCreds();
     }
 
-    fetchUserInfo(userEmail, userPassword){
-        return {
-            userId: '123',
-            userName: 'John Doe',
-            userEmail: userEmail,
-            userPassword: userPassword
-        };
+    setEmail(currentEmail) {
+        this.setState({ email: currentEmail.target.value });
     }
-    render(){
-        return(
+
+    setPassword(currentPassword) {
+        this.setState({ password: currentPassword.target.value });
+    }
+
+    render() {
+        return (
             <div className='UserLogin'>
-                <h1>
-                    UserLogin
-                </h1>
+                <h1>UserLogin</h1>
                 <form onSubmit={this.submitHandler}>
-                    Email: <input type= "text" id="email" onChange={this.setEmail}/>
-                    <br/>
-                    <br/>
-                    Password:<input type = "password" id="password" onChange={this.setPassword}/>
-                    <br/>
-                    <br/>
+                    Email: <input type="text" id="email" onChange={this.setEmail} />
+                    <br/><br/>
+                    Password:<input type="password" id="password" onChange={this.setPassword} />
+                    <br/><br/>
                     <button type="submit" onClick={this.clearInputs}>Submit</button>
                 </form>
             </div>
-        )
+        );
     }
 }
-function PageNavigation(props){
+
+function PageNavigation(props) {
     const navigate = useNavigate();
-    return <UserLogin{...props} navigate={navigate}/>;
-  }
-  export default PageNavigation;
+    return <UserLogin {...props} navigate={navigate} />;
+}
+
+export default PageNavigation;
