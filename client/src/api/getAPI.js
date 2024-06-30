@@ -10,7 +10,12 @@ export const getAPI = (path) => {
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
-        return response.json();
+        if( typeof response === 'boolean'){
+            return response;
+        }else{
+            return response.json();
+        }
+
     })
     .catch(error => {
         console.error('Error fetching data:', error);

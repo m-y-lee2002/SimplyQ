@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAPI } from '../api/getAPI';
+import {SHA1} from 'crypto-js';
 
 class UserLogin extends Component {
     constructor(props) {
@@ -26,15 +27,21 @@ class UserLogin extends Component {
         const { email, password } = this.state;
         try {
             const response = await getAPI('/verifyUserLogin/' + email);
-            console.log("Response:", response);
-            if(response){
-                return true
-            }else{
+            /**
+             * Need to encrypt password and compare hashes
+             */
+            console.log(response);
+            console.log(SHA1(password).toString());
+            if (response && response.password && response.password === SHA1(password).toString()) {
+                console.log(true);
+                return true;
+            } else {
+                console.log(false);
                 return false;
             }
             
         } catch (error) {
-            return false;
+           console.log(error);
         }
     }
 
@@ -47,7 +54,11 @@ class UserLogin extends Component {
             return;
         }
 
-        this.verifyUserCreds();
+        if(await this.verifyUserCreds() == true){
+            this.props.navigate('/');
+        }else{
+            alert("Email or Password is Invalid");
+        }
     }
 
     setEmail(currentEmail) {
@@ -69,6 +80,7 @@ class UserLogin extends Component {
                     <br/><br/>
                     <button type="submit" onClick={this.clearInputs}>Submit</button>
                 </form>
+                <a href="/UserRegister">Create Account</a>
             </div>
         );
     }
