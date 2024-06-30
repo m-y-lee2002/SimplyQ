@@ -24,6 +24,16 @@ public class    UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    @PostMapping("/api/post/registerUser")
+    public ResponseEntity<User> registerUser(@RequestBody User user) {
+        try {
+            User savedUser = userService.saveUser(user);
+            return ResponseEntity.ok(savedUser);
+        } catch (RuntimeException e) {
+            // Log the exception or handle it as needed
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
     @GetMapping("/api/get/verifyUserLogin/{email}")
     public ResponseEntity<User> verifyUserLogin(@PathVariable String email) {
         try {
@@ -32,6 +42,22 @@ public class    UserController {
         } catch (RuntimeException e) {
             // Log the exception or handle it as needed
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    @GetMapping("/api/get/verifyUserEmail/{email}")
+    public Boolean verifyUserEmail(@PathVariable String email) {
+        try {
+            User savedUser = userService.getUserByEmail(email);
+            if(savedUser == null){
+                return true;
+            }else{
+                return false;
+            }
+           // return ResponseEntity.ok(savedUser);
+        } catch (RuntimeException e) {
+            // Log the exception or handle it as needed
+            System.out.println(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
+            return false;
         }
     }
 }
