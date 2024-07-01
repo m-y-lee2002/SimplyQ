@@ -21,8 +21,11 @@ jobs:
 
       - name: Cache Maven packages
         uses: actions/cache@v2
-        key: $GITHUB_REPO/maven-packages
-        path: ~/.m2/repository
+        with:
+          path: ~/.m2/repository
+          key: ${{ github.repository }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ github.repository }}-maven-
 
       - name: Build and test with Maven
         run: |
