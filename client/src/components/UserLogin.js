@@ -34,6 +34,7 @@ class UserLogin extends Component {
             console.log(SHA1(password).toString());
             if (response && response.password && response.password === SHA1(password).toString()) {
                 console.log(true);
+                localStorage.setItem('currentUser',JSON.stringify(response));
                 return true;
             } else {
                 console.log(false);
@@ -55,7 +56,7 @@ class UserLogin extends Component {
         }
 
         if(await this.verifyUserCreds() == true){
-            this.props.navigate('/');
+            this.props.navigate('/UserPage');
         }else{
             alert("Email or Password is Invalid");
         }
