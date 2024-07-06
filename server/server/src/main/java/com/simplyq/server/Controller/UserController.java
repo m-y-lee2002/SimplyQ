@@ -2,6 +2,7 @@ package com.simplyq.server.Controller;
 
 import com.simplyq.server.Entity.User;
 import com.simplyq.server.Service.UserService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +59,15 @@ public class    UserController {
             // Log the exception or handle it as needed
             System.out.println(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
             return false;
+        }
+    }
+    @PutMapping("/api/put/user/updateUser")
+    public ResponseEntity<User> updateUser(@RequestBody User user){
+        try{
+            User savedUser= userService.saveUser(user);
+            return ResponseEntity.ok(savedUser);
+        }catch(RuntimeException e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }
