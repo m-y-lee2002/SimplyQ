@@ -2,6 +2,7 @@ package com.simplyq.server.Service;
 
 import com.simplyq.server.Entity.Queue;
 import com.simplyq.server.Repository.QueueRepo;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.repository.Query;
@@ -29,7 +30,20 @@ public class QueueService {
     public List<Queue> getAllQueues(){
         return queueRepo.findAll();
     }
-    public Queue getLastUser(){
-        return queueRepo.
+    public Integer getLastUserPosition(){
+        return queueRepo.getMaxQueuePosition();
+    }
+    @Transactional
+    public Boolean removeQueueById(Integer uid){
+        try {
+            queueRepo.deleteByUid(uid);
+            return true;
+        } catch (DataIntegrityViolationException e) {
+            // Handle data integrity violations (e.g., unique constraint violations)
+            throw new RuntimeException("Failed to delete user due to data integrity violation: " + e.getMessage());
+        } catch (Exception e) {
+            // Handle other unexpected exceptions
+            throw new RuntimeException("Failed to delete user: " + e.getMessage());
+        }
     }
 }

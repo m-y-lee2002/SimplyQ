@@ -1,5 +1,6 @@
 package com.simplyq.server.Controller;
 import com.simplyq.server.Entity.Queue;
+import com.simplyq.server.Entity.User;
 import com.simplyq.server.Service.QueueService;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+//@CrossOrigin(origins = "http://localhost:3000",  allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST}, allowCredentials = "true")
 @RestController
 public class QueueController {
     @Autowired
@@ -37,10 +38,30 @@ public class QueueController {
     @GetMapping("/api/get/queue/getMaxPosition")
     public ResponseEntity<Integer> getMaxPosition(){
         try{
-            Queue savedQueue= queueService.getLastUser();
+            Integer position= queueService.getLastUserPosition();
 
-            return ResponseEntity.ok(savedQueue);
+            return ResponseEntity.ok(position);
         }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/api/post/queue/addToQueue")
+    public ResponseEntity<Queue> postUserToQueue(@RequestBody Queue queue){
+        try {
+            Queue savedQueue = queueService.saveQueue(queue);
+            return ResponseEntity.ok(savedQueue);
+        } catch (RuntimeException e) {
+            // Log the exception or handle it as needed
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    @DeleteMapping("/api/delete/queue/removeFromQueue/{uid}")
+    public ResponseEntity<Boolean> deleteUserFromQueue(@PathVariable Integer uid){
+        try{
+            Boolean savedQueue= queueService.removeQueueById(uid);
+            return ResponseEntity.ok(savedQueue);
+        }catch(RuntimeException e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

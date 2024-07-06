@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 public interface QueueRepo extends JpaRepository<Queue,Integer> {
     @Query(value= "SELECT MAX(queue.queuePosition) FROM queue", nativeQuery = true)
     Integer getMaxQueuePosition();
+
+    void deleteByUid(Integer uid);
 }
