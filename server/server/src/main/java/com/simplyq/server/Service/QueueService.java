@@ -46,4 +46,18 @@ public class QueueService {
             throw new RuntimeException("Failed to delete user: " + e.getMessage());
         }
     }
+
+    @Transactional
+    public Boolean removeQueueByPosition(Integer queuePosition){
+        try {
+            queueRepo.deleteByQueuePosition(queuePosition);
+            return true;
+        } catch (DataIntegrityViolationException e) {
+            // Handle data integrity violations (e.g., unique constraint violations)
+            throw new RuntimeException("Failed to delete user due to data integrity violation: " + e.getMessage());
+        } catch (Exception e) {
+            // Handle other unexpected exceptions
+            throw new RuntimeException("Failed to delete user: " + e.getMessage());
+        }
+    }
 }

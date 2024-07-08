@@ -9,4 +9,6 @@ public interface QueueRepo extends JpaRepository<Queue,Integer> {
     Integer getMaxQueuePosition();
 
     void deleteByUid(Integer uid);
+
+    void deleteByQueuePosition(Integer queuePosition);
 }
