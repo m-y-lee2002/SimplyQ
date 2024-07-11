@@ -10,5 +10,5 @@ public interface QueueRepo extends JpaRepository<Queue,Integer> {
 
     void deleteByUid(Integer uid);
 
-    void deleteByQueuePosition(Integer queuePosition);
+   // void deleteByQueuePosition(Integer queuePosition);
 }

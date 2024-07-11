@@ -75,13 +75,13 @@ public class QueueController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    @DeleteMapping("/api/delete/queue/removeUserPosition/{queuePosition}")
-    public ResponseEntity<Boolean> deleteLastUser(@PathVariable Integer queuePosition){
-        try{
-            Boolean savedQueue= queueService.removeQueueByPosition(queuePosition);
-            return ResponseEntity.ok(savedQueue);
-        }catch(RuntimeException e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+//    @DeleteMapping("/api/delete/queue/removeUserPosition/{queuePosition}")
+//    public ResponseEntity<Boolean> deleteLastUser(@PathVariable Integer queuePosition){
+//        try{
+//            Boolean savedQueue= queueService.removeQueueByPosition(queuePosition);
+//            return ResponseEntity.ok(savedQueue);
+//        }catch(RuntimeException e){
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+//        }
+//    }
 }
