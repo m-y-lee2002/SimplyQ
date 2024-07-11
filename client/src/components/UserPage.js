@@ -24,42 +24,55 @@ class UserPage extends Component {
     this.setState({ currentUser: updatedUser });
     await updateAPI(updatedUser, '/user/updateUser');
     await deleteAPI("/queue/removeFromQueue/" + currentUser.uid);
-    this.updateQueuePosition();
+   // this.updateQueuePosition();
     const currentPosition = null;
     this.setState({ position: currentPosition });
   }
   async updateQueuePosition() {
-    const { position } = this.state;
-    const currentQueue = await getAPI('/queue/getAll');
-    let i = 0;
-    while(currentQueue[i].queuePosition < position){
-      i++;
-    }
-    for(let j = i; j < currentQueue.length; j++){
-      currentQueue[j].queuePosition = currentQueue[j].queuePosition -1;
-      await(updateAPI(currentQueue[j],"/queue/updateQueue"));
-    }
-    await deleteAPI("/queue/removeUserPosition/"+currentQueue.length);
+  //   const { position } = this.state;
+  //   const currentQueue = await getAPI('/queue/getAll');
+  //   console.log(currentQueue);
+  //   let i = 0;
+  //   while(currentQueue[i] && currentQueue[i].queuePosition < position){
+  //     i++;
+  //   }
+  //   for(let j = i; j < currentQueue.length; j++){
+  //     currentQueue[j].queuePosition = currentQueue[j].queuePosition -1;
+  //     await(updateAPI(currentQueue[j],"/queue/updateQueue"));
+  //   }
+
+  //   await deleteAPI("/queue/removeUserPosition/"+currentQueue.length);
     
   }
+  /*
+  * Handles when user joins the queue
+  * 
+  * @param N/A
+  * @return N/A
+  * @throws N/A
+  */
   async joinQueue() {
+    //Get current user to update
     const { currentUser } = this.state;
+    //Update current user status to be in queue locally
     const updatedUser = { ...currentUser, inQueue: true };
-    this.setState({ currentUser: updatedUser });
-    await updateAPI(updatedUser, '/user/updateUser');
-    //update queue position
     const currentPosition = await this.getQueuePosition() + 1;
-    this.setState({ position: currentPosition });
+    this.setState({ currentUser: updatedUser, position: currentPosition });
+    //Update changes to user on User table
+    await updateAPI(updatedUser, '/user/updateUser');
+    //Post user to queue table
     const queueObj = {
       queuePosition: currentPosition,
       uid: currentUser.uid
     }
     await postAPI(queueObj, "/queue/addToQueue");
   }
+
   async getQueuePosition() {
     const position = await getAPI("/queue/getMaxPosition");
-    return position;
+    return position? position: -1;
   }
+
   componentDidMount() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     this.setState({ currentUser });
@@ -75,13 +88,24 @@ class UserPage extends Component {
       <div className='UserPage'>
         <button onClick={this.logOut}>Logout</button>
         {currentUser.inQueue ? (
-          <div className='InQueueUser'>
+          position === 0?(
+            <div className='NextUpInQueue'>
+              <h1>{currentUser.name}</h1>
+              Next Up!
+              <br />
+              <br />
+              <button onClick={this.leaveQueue}>Leave Queue</button>
+            </div>
+          ):(
+            <div className='InQueueUser'>
             <h1>{currentUser.name}</h1>
             Position: {position}
             <br />
             <br />
             <button onClick={this.leaveQueue}>Leave Queue</button>
           </div>
+
+          )
         ) : (
           <div className='OutQueueUser'>
             <h1>{currentUser.name}</h1>
