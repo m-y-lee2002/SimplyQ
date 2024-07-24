@@ -24,4 +24,12 @@ public class StaffService {
             throw new RuntimeException("Failed to save user: " + e.getMessage());
         }
     }
+    public Staff getStaffByEmail(String email){
+        try{
+            return staffRepo.findStaffByEmail(email);
+        }catch(Exception e){
+            throw new RuntimeException( e.getMessage());
+        }
+    }
+
 }
