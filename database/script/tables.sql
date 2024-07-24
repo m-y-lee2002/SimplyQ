@@ -25,10 +25,18 @@ show tables;
 --     `queuePosition` INT PRIMARY KEY,
 --     `uid` INT references uid(`uid`)
 -- );
+
+-- Delete from user where uid = 5;
 Select *
 From user;
 
-Select *
-From staff;
-Select *
+-- Select *
+-- From staff;
+
+Select max(queue.queuePosition)
 From queue;
+
+Select *
+From queue
+
+ 
