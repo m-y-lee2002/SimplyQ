@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import { useNavigate } from 'react-router-dom';  
+import { useNavigate } from 'react-router-dom';
+import { getAPI } from '../api/getAPI';
+import {SHA1} from 'crypto-js'; 
 
 class StaffLogin extends Component{
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
             email: null,
@@ -12,69 +14,81 @@ class StaffLogin extends Component{
         this.submitHandler = this.submitHandler.bind(this);
         this.setPassword = this.setPassword.bind(this);
         this.setEmail = this.setEmail.bind(this);
-        this.fetchUserInfo = this.fetchUserInfo.bind(this);
         this.verifyUserCreds = this.verifyUserCreds.bind(this);
         this.clearInputs = this.clearInputs.bind(this);
+        this.goHome = this.goHome.bind(this);
     }
-    clearInputs(){
+    goHome(){
+        this.props.navigate("/");
+    }
+
+    clearInputs() {
         document.getElementById('email').value = '';
         document.getElementById('password').value = '';
     }
-    verifyUserCreds(){
-        const result = this.fetchUserInfo;
-        if(result == null){
-            return false;
-        }else{
-            return true;
-        }
-    }
-    submitHandler(event){
-        event.preventDefault();
-        const{email, password} = this.state;
-        if(email == null || password == null){
-            alert("Missing email or password");
-        }else{
-            if(this.verifyUserCreds === true){
 
-            }else{
-                alert("Invalid Username or Password");
+    async verifyUserCreds() {
+        const { email, password } = this.state;
+        try {
+            const response = await getAPI('/staff/verifyStaffLogin/' + email);
+            /**
+             * Need to encrypt password and compare hashes
+             */
+            console.log(response);
+            console.log(SHA1(password).toString());
+            if (response && response.password && response.password === SHA1(password).toString()) {
+                console.log(true);
+                localStorage.setItem('currentStaff',JSON.stringify(response));
+                return true;
+            } else {
+                console.log(false);
+                return false;
             }
+            
+        } catch (error) {
+           console.log(error);
+        }
+    }
+
+    submitHandler = async (event) => {
+        event.preventDefault();
+        const { email, password } = this.state;
+
+        if (!email || !password) {
+            alert("Missing email or password");
+            return;
         }
 
-    }
-    setEmail(currentEmail){
-        this.setState({email:currentEmail.target.value});
-    }
-    setPassword(currentPassword){
-        this.setState({password:currentPassword.target.value});
+        if(await this.verifyUserCreds() == true){
+            this.props.navigate('/StaffPage');
+        }else{
+            alert("Email or Password is Invalid");
+        }
     }
 
-    fetchUserInfo(userEmail, userPassword){
-        return {
-            userId: '123',
-            userName: 'John Doe',
-            userEmail: userEmail,
-            userPassword: userPassword
-        };
+    setEmail(currentEmail) {
+        this.setState({ email: currentEmail.target.value });
     }
-    render(){
-        return(
+
+    setPassword(currentPassword) {
+        this.setState({ password: currentPassword.target.value });
+    }
+
+    render() {
+        return (
             <div className='StaffLogin'>
-            
-                <h1>
-                    UserLogin
-                </h1>
+                <button onClick={this.goHome}>Back</button>
+                <h1>Staff Login</h1>
                 <form onSubmit={this.submitHandler}>
-                    Email: <input type= "text" onChange={this.setEmail}/>
-                    <br/>
-                    <br/>
-                    Password:<input type = "password" onChange={this.setPassword}/>
-                    <br/>
-                    <br/>
-                    <button type="submit"  onClick={this.clearInputs}>Submit</button>
+                    Email: <input type="text" id="email" onChange={this.setEmail} />
+                    <br/><br/>
+                    Password:<input type="password" id="password" onChange={this.setPassword} />
+                    <br/><br/>
+                    <button type="submit" onClick={this.clearInputs}>Submit</button>
                 </form>
+                <a href="/StaffRegister">Create Account</a>
             </div>
-        )
+        );
     }
 }
 function PageNavigation(props){

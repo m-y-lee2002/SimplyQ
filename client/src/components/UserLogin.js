@@ -16,6 +16,10 @@ class UserLogin extends Component {
         this.setEmail = this.setEmail.bind(this);
         this.verifyUserCreds = this.verifyUserCreds.bind(this);
         this.clearInputs = this.clearInputs.bind(this);
+        this.goHome = this.goHome.bind(this);
+    }
+    goHome(){
+        this.props.navigate("/");
     }
 
     clearInputs() {
@@ -73,7 +77,8 @@ class UserLogin extends Component {
     render() {
         return (
             <div className='UserLogin'>
-                <h1>UserLogin</h1>
+                <button onClick={this.goHome}>Back</button>
+                <h1>User Login</h1>
                 <form onSubmit={this.submitHandler}>
                     Email: <input type="text" id="email" onChange={this.setEmail} />
                     <br/><br/>
