@@ -26,4 +26,8 @@ public class UserService {
     public User getUserByEmail(String email){
         return userRepo.findByEmail(email);
     }
+
+    public User getUserByUid(Integer uid){
+        return userRepo.findUserByUid(uid);
+    }
 }

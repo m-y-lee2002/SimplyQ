@@ -70,4 +70,13 @@ public class    UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    @GetMapping("/api/get/user/getUser/{uid}")
+    public ResponseEntity<User> getUser(@PathVariable Integer uid){
+        try{
+            User savedUser = userService.getUserByUid(uid);
+            return ResponseEntity.ok(savedUser);
+        }catch(RuntimeException e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }

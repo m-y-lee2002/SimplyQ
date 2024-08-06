@@ -20,20 +20,27 @@ class StaffPage extends Component{
         const{allUsers} = this.state;
         for(let i = 0; i< allUsers.length; i++){
             if(allUsers[i].uid == targetId){
-                return allUsers[i];
+                return allUsers[i].name;
             }
         }
     }
-    async getQueue(){
-        const newQueue = await getAPI("/queue/getAll");
-        const newAllUsers = []
-        for(let i = 0; i < newQueue.length; i++){
-            //need to write getAPI for get user by uid
-            const newUser = await getAPI("/user/getUser/" + newQueue[i].uid);
-            newAllUsers.push(newUser);
-        }
-        this.setState({currentQueue:newQueue, allUsers: newAllUsers});
-        
+    async getQueue() {
+            const newQueue = await getAPI("/queue/getAll");
+            console.log("Queue received:", newQueue);
+    
+            const newAllUsers = [];
+            
+            for (const queueItem of newQueue) {
+                console.log("Fetching user for uid:", queueItem.uid);
+                const newUser = await getAPI("/user/getUser/" + queueItem.uid);
+                console.log("User received:", newUser);
+                newAllUsers.push(newUser);
+            }
+            
+            console.log("Final all users array:", newAllUsers);
+            console.log("Array size:", newAllUsers.length);
+            
+            this.setState({currentQueue: newQueue, allUsers: newAllUsers});
     }
     render(){
         const{currentStaff,currentQueue} = this.state;

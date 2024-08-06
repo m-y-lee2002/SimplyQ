@@ -56,7 +56,10 @@ class UserPage extends Component {
     const { currentUser } = this.state;
     //Update current user status to be in queue locally
     const updatedUser = { ...currentUser, inQueue: true };
-    const currentPosition = await this.getQueuePosition() + 1;
+    let maxPosition = await this.getQueuePosition();
+    console.log("prevPosition: " + maxPosition);
+    let currentPosition = maxPosition + 1;
+    console.log("currentPosition" + currentPosition);
     this.setState({ currentUser: updatedUser, position: currentPosition });
     //Update changes to user on User table
     await updateAPI(updatedUser, '/user/updateUser');
@@ -69,8 +72,13 @@ class UserPage extends Component {
   }
 
   async getQueuePosition() {
-    const position = await getAPI("/queue/getMaxPosition");
-    return position? position: -1;
+    let position = await getAPI(`/queue/getMaxPosition?timestamp=${new Date().getTime()}`);
+    console.log("max position: " + position);
+    if(position == null){
+      return -1;
+    }else{
+      return position;
+    }
   }
 
   componentDidMount() {
